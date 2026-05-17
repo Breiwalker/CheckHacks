@@ -3,6 +3,7 @@ package me.branduzzo.checkHacks.listeners;
 import me.branduzzo.checkHacks.CheckHacksPlugin;
 import me.branduzzo.checkHacks.ClientType;
 import me.branduzzo.checkHacks.HackDefinition;
+import me.branduzzo.checkHacks.utils.FoliaScheduler;
 import me.branduzzo.checkHacks.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class JoinListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        FoliaScheduler.runAtEntityLater(plugin, player, () -> {
             if (!player.isOnline()) return;
             Set<String> channels = player.getListeningPluginChannels();
             ClientType type = detectClientType(channels);
@@ -50,7 +51,7 @@ public class JoinListener implements Listener {
 
         if (plugin.getConfigManager().isJoinCheckEnabled()) {
             if (!plugin.getConfigManager().isOnlyFirstJoin() || alreadyHackChecked.add(uuid)) {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                FoliaScheduler.runAtEntityLater(plugin, player, () -> {
                     if (!player.isOnline()) return;
                     java.util.List<HackDefinition> hacks = plugin.getConfigManager().getJoinCheckHacks();
                     if (hacks.isEmpty()) return;
@@ -64,7 +65,7 @@ public class JoinListener implements Listener {
         if (plugin.getConfigManager().isLangJoinCheckEnabled()) {
             boolean isFirst = alreadyLangChecked.add(uuid);
             if (!plugin.getConfigManager().isLangOnlyFirstJoin() || isFirst) {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                FoliaScheduler.runAtEntityLater(plugin, player, () -> {
                     if (!player.isOnline()) return;
                     Map<String, String> langs = plugin.getConfigManager().getLanguages();
                     if (langs.isEmpty()) return;

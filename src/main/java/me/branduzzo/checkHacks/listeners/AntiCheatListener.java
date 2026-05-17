@@ -2,6 +2,7 @@ package me.branduzzo.checkHacks.listeners;
 
 import me.branduzzo.checkHacks.CheckHacksPlugin;
 import me.branduzzo.checkHacks.HackDefinition;
+import me.branduzzo.checkHacks.utils.FoliaScheduler;
 import me.branduzzo.checkHacks.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -76,7 +77,7 @@ public class AntiCheatListener implements Listener {
         List<HackDefinition> hacks = plugin.getConfigManager().getFlagCheckHacks();
         if (hacks.isEmpty()) return;
 
-        Bukkit.getScheduler().runTask(plugin, () ->
+        FoliaScheduler.runAtEntity(plugin, player, () ->
                 plugin.getCheckManager().startCheck(player, null, hacks, true,
                         "Anticheat flag: " + acName));
     }
