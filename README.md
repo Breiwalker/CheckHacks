@@ -77,4 +77,5 @@ If you need a specific mod added, or have any doubts about how detection works, 
 
 ## 📜 Credits
 
-* **Branduzzo** - Plugin creator and developer
+* **Branduzzo**  - Creator and developer of original plugin
+* **Breiwalker** - Creator and developer of this fork you are looking at
