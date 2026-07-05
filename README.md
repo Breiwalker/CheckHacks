@@ -70,8 +70,8 @@ CheckHacks is an innovative server-side anticheat plugin that detects client-sid
 ## ⚠️ Warning
 
 Mod developers can patch their mods at any time to block or spoof the Sign Translation Vulnerability, potentially making detection unreliable for specific clients. I will do my best to stay ahead of any patches, find bypasses, and continuously add support for new mods of all kinds. This is an ongoing effort, not a one-time solution.
-
-If you need a specific mod added, or have any doubts about how detection works, feel free to DM me on Discord at **@branduzzo.** (with the dot).
+If you have any doubts about how detection works, feel free to DM the Creator on Discord at **@branduzzo.** (with the dot).
+If you want a specific mod to be added to this Fork, feel free to DM me on Discord at **@Breiwalker**
 
 ---
 
