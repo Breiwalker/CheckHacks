@@ -63,6 +63,7 @@ CheckHacks is an innovative server-side anticheat plugin that detects client-sid
 | AutoClicker (Fabric) | TRANSLATE |
 | AntiAFK | TRANSLATE |
 | Auto Clicker (p1k0chu) | KEYBIND |
+| SeedCrackerX (1.2.1+) | KEYBIND |
 
 ---
 
