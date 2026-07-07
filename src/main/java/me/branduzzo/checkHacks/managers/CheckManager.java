@@ -293,14 +293,89 @@ public class CheckManager {
         }
 
         final String tn = targetName;
+
+        String detectedMessage = "Cheating detected!";
+        String customKickMessage = null;
+        String rawDurationForCommand = "5m";
+
+        if (anyDetected) {
+            for (HackDefinition hack : allHacks) {
+                HackResult r = data.getResults().getOrDefault(hack.getId(), HackResult.SKIPPED);
+                if (r == HackResult.DETECTED) {
+                    if (hack.getMessage() != null && !hack.getMessage().isEmpty()) {
+                        customKickMessage = hack.getMessage();
+                        detectedMessage = customKickMessage;
+                    } else {
+                        detectedMessage = hack.getDisplayName();
+                    }
+                    rawDurationForCommand = plugin.getConfig().getString("hacks." + hack.getId() + ".duration", "5m");
+                    break;
+                }
+            }
+        } else if (anyProtected) {
+            for (HackDefinition hack : allHacks) {
+                HackResult r = data.getResults().getOrDefault(hack.getId(), HackResult.SKIPPED);
+                if (r == HackResult.PROTECTED) {
+                    detectedMessage = hack.getDisplayName() + " (Protected)";
+                    rawDurationForCommand = plugin.getConfig().getString("hacks." + hack.getId() + ".duration", "5m");
+                    break;
+                }
+            }
+        }
+
+        final String rawMessageForCommand = detectedMessage
+                .replaceAll("(?i)&[0-9a-fk-orx]", "")
+                .replaceAll("(?i)§[0-9a-fk-orx]", "")
+                .replaceAll("<[^>]*>", "");
+
+        final String finalDuration = rawDurationForCommand;
+
+        boolean commandExecuted = false;
+
         if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
-            String cmd = cfg.getPositiveCommand().replace("%player%", tn);
+            String cmd = cfg.getPositiveCommand()
+                    .replace("%player%", tn)
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%duration%", finalDuration);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            commandExecuted = true;
         }
+
         if (anyProtected && !anyDetected && cfg.isCommandIfProtectedEnabled()) {
-            String cmd = cfg.getProtectedCommand().replace("%player%", tn);
+            String cmd = cfg.getProtectedCommand()
+                    .replace("%player%", tn)
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%duration%", finalDuration);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            commandExecuted = true;
         }
+
+        if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
+            String cmd = cfg.getPositiveCommand()
+                    .replace("%player%", tn)
+                    .replace("%message%", rawMessageForCommand);
+            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            commandExecuted = true;
+        }
+
+        if (anyProtected && !anyDetected && cfg.isCommandIfProtectedEnabled()) {
+            String cmd = cfg.getProtectedCommand()
+                    .replace("%player%", tn)
+                    .replace("%message%", rawMessageForCommand);
+            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            commandExecuted = true;
+        }
+
+        if (anyDetected && !commandExecuted && targetPlayer != null && targetPlayer.isOnline() && customKickMessage != null) {
+            String formattedMessage = customKickMessage.replace("&", "§");
+            final Component kickComp = MiniMessage.miniMessage().deserialize(
+                    MiniMessage.miniMessage().serialize(
+                            net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(formattedMessage)
+                    )
+            );
+            Bukkit.getScheduler().runTask(plugin, () -> targetPlayer.kick(kickComp));
+        }
+
         if (allClean && cfg.isCommandIfCleanEnabled()) {
             String cmd = cfg.getCleanCommand().replace("%player%", tn);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
