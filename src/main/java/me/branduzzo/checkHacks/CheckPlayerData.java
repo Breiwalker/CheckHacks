@@ -1,8 +1,8 @@
 package me.branduzzo.checkHacks;
 
+import me.branduzzo.checkHacks.utils.WrappedTask;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,7 +24,7 @@ public class CheckPlayerData {
     private BlockState originalState;
     private boolean barrierPlaced;
     private Location barrierLocation;
-    private BukkitTask signTimeoutTask;
+    private WrappedTask signTimeoutTask;
 
     public CheckPlayerData(UUID targetUUID, UUID initiatorUUID,
                            List<List<HackDefinition>> batches,
@@ -59,6 +59,6 @@ public class CheckPlayerData {
     public void setBarrierPlaced(boolean b)      { this.barrierPlaced = b; }
     public Location getBarrierLocation()         { return barrierLocation; }
     public void setBarrierLocation(Location l)   { this.barrierLocation = l; }
-    public BukkitTask getSignTimeoutTask()       { return signTimeoutTask; }
-    public void setSignTimeoutTask(BukkitTask t) { this.signTimeoutTask = t; }
+    public WrappedTask getSignTimeoutTask()       { return signTimeoutTask; }
+    public void setSignTimeoutTask(WrappedTask t) { this.signTimeoutTask = t; }
 }
