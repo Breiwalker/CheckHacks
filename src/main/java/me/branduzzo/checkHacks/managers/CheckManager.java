@@ -296,7 +296,6 @@ public class CheckManager {
 
         String detectedMessage = "Cheating detected!";
         String customKickMessage = null;
-        String rawDurationForCommand = "5m";
 
         if (anyDetected) {
             for (HackDefinition hack : allHacks) {
@@ -308,7 +307,6 @@ public class CheckManager {
                     } else {
                         detectedMessage = hack.getDisplayName();
                     }
-                    rawDurationForCommand = plugin.getConfig().getString("hacks." + hack.getId() + ".duration", "5m");
                     break;
                 }
             }
@@ -317,7 +315,6 @@ public class CheckManager {
                 HackResult r = data.getResults().getOrDefault(hack.getId(), HackResult.SKIPPED);
                 if (r == HackResult.PROTECTED) {
                     detectedMessage = hack.getDisplayName() + " (Protected)";
-                    rawDurationForCommand = plugin.getConfig().getString("hacks." + hack.getId() + ".duration", "5m");
                     break;
                 }
             }
@@ -328,27 +325,7 @@ public class CheckManager {
                 .replaceAll("(?i)§[0-9a-fk-orx]", "")
                 .replaceAll("<[^>]*>", "");
 
-        final String finalDuration = rawDurationForCommand;
-
         boolean commandExecuted = false;
-
-        if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
-            String cmd = cfg.getPositiveCommand()
-                    .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand)
-                    .replace("%duration%", finalDuration);
-            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
-            commandExecuted = true;
-        }
-
-        if (anyProtected && !anyDetected && cfg.isCommandIfProtectedEnabled()) {
-            String cmd = cfg.getProtectedCommand()
-                    .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand)
-                    .replace("%duration%", finalDuration);
-            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
-            commandExecuted = true;
-        }
 
         if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
             String cmd = cfg.getPositiveCommand()
