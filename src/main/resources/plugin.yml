@@ -1,9 +1,9 @@
-name: CheckHacks-Fork
+name: CheckHacks
 version: 1.2.2
 main: me.branduzzo.checkHacks.CheckHacksPlugin
 api-version: '26.1'
-description: Detects client-side hacks and mods via the Sign Translation Vulnerability. | FORK OF CheckHacks!
-author: branduzzo, Breiwalker
+description: Detects client-side hacks and mods via the Sign Translation Vulnerability.
+author: [branduzzo]
 
 softdepend:
   - PlaceholderAPI
