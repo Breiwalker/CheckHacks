@@ -2,8 +2,10 @@ package me.branduzzo.checkHacks.managers;
 
 import me.branduzzo.checkHacks.CheckHacksPlugin;
 import me.branduzzo.checkHacks.LangCheckData;
+import me.branduzzo.checkHacks.utils.FoliaScheduler;
 import me.branduzzo.checkHacks.utils.SignUtil;
 import me.branduzzo.checkHacks.utils.WebhookUtil;
+import me.branduzzo.checkHacks.utils.WrappedTask;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +15,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,6 +53,12 @@ public class LangCheckManager {
             initiator.sendMessage(plugin.getMessageManager().get("lang-check-started",
                     Map.of("player", target.getName())));
 
+        FoliaScheduler.runAtEntity(plugin, target, () -> setupLangSign(target, data));
+    }
+
+    private void setupLangSign(Player target, LangCheckData data) {
+        UUID uuid = target.getUniqueId();
+
         Location signLoc = SignUtil.findAirBlock(target);
         if (signLoc == null) { activeChecks.remove(uuid); return; }
 
@@ -82,17 +89,17 @@ public class LangCheckManager {
 
         SignUtil.setAllowedEditor(signLoc, uuid, plugin);
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        FoliaScheduler.runAtEntity(plugin, target, () -> {
             if (!activeChecks.containsKey(uuid)) return;
             SignUtil.sendBlockEntityPacket(target, signLoc, plugin);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            FoliaScheduler.runAtEntityLater(plugin, target, () -> {
                 if (!activeChecks.containsKey(uuid)) return;
                 SignUtil.sendOpenSignPacket(target, signLoc, plugin);
                 target.sendBlockChange(signLoc, Material.AIR.createBlockData());
             }, 1L);
         });
 
-        BukkitTask timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        WrappedTask timeout = FoliaScheduler.runAtLocationLater(plugin, signLoc, () -> {
             if (!activeChecks.containsKey(uuid)) return;
             restoreSign(data);
             activeChecks.remove(uuid);
@@ -173,7 +180,7 @@ public class LangCheckManager {
     private void restoreSign(LangCheckData data) {
         Location loc = data.getSignLocation();
         if (loc == null) return;
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        FoliaScheduler.runAtLocation(plugin, loc, () -> {
             try { if (data.getOriginalState() != null) data.getOriginalState().update(true, false); }
             catch (Exception e) { plugin.getLogger().warning("[CheckHacks] LangRestore: " + e.getMessage()); }
             if (data.isBarrierPlaced() && data.getBarrierLocation() != null) {

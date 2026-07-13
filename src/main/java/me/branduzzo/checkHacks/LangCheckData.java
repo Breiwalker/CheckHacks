@@ -1,8 +1,8 @@
 package me.branduzzo.checkHacks;
 
+import me.branduzzo.checkHacks.utils.WrappedTask;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +17,7 @@ public class LangCheckData {
     private BlockState originalState;
     private boolean barrierPlaced;
     private Location barrierLocation;
-    private BukkitTask timeoutTask;
+    private WrappedTask timeoutTask;
 
     public LangCheckData(UUID targetUUID, UUID initiatorUUID, Map<String, String> languages) {
         this.targetUUID    = targetUUID;
@@ -36,6 +36,6 @@ public class LangCheckData {
     public void setBarrierPlaced(boolean b)    { this.barrierPlaced = b; }
     public Location getBarrierLocation()       { return barrierLocation; }
     public void setBarrierLocation(Location l) { this.barrierLocation = l; }
-    public BukkitTask getTimeoutTask()         { return timeoutTask; }
-    public void setTimeoutTask(BukkitTask t)   { this.timeoutTask = t; }
+    public WrappedTask getTimeoutTask()         { return timeoutTask; }
+    public void setTimeoutTask(WrappedTask t)   { this.timeoutTask = t; }
 }
