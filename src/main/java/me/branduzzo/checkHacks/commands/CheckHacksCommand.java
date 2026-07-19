@@ -2,6 +2,7 @@ package me.branduzzo.checkHacks.commands;
 
 import me.branduzzo.checkHacks.CheckHacksPlugin;
 import me.branduzzo.checkHacks.HackDefinition;
+import me.branduzzo.checkHacks.utils.FoliaScheduler;
 import me.branduzzo.checkHacks.utils.MessageUtil;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -74,7 +75,8 @@ public class CheckHacksCommand implements CommandExecutor, TabCompleter {
         Player initiator = (sender instanceof Player p) ? p : null;
         String reason = initiator != null
                 ? "Manual check by " + initiator.getName() : "Console check";
-        plugin.getCheckManager().startCheck(target, initiator, hacks, false, reason);
+        FoliaScheduler.runAtEntity(plugin, target,
+                () -> plugin.getCheckManager().startCheck(target, initiator, hacks, false, reason));
         return true;
     }
 
