@@ -49,6 +49,7 @@ public class ConfigManager {
             if (key.isBlank()) continue;
 
             String message = section.getString(id + ".message", "&cPlease disable " + displayName + " before joining again!");
+            String command = section.getString(id + ".command", "kick %player% &cPlease disable " + displayName + " before joining again!");
 
             DetectionMode mode;
             try {

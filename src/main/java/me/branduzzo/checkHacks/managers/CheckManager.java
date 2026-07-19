@@ -330,7 +330,8 @@ public class CheckManager {
         if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
             String cmd = cfg.getPositiveCommand()
                     .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand);
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%command%", detectedMessage);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
             commandExecuted = true;
         }
@@ -338,7 +339,8 @@ public class CheckManager {
         if (anyProtected && !anyDetected && cfg.isCommandIfProtectedEnabled()) {
             String cmd = cfg.getProtectedCommand()
                     .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand);
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%command%", detectedMessage);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
             commandExecuted = true;
         }
