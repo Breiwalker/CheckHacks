@@ -3,6 +3,7 @@ package me.branduzzo.checkHacks.managers;
 import me.branduzzo.checkHacks.*;
 import me.branduzzo.checkHacks.utils.SignUtil;
 import me.branduzzo.checkHacks.utils.WebhookUtil;
+import me.branduzzo.checkHacks.utils.WrappedTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -138,6 +139,7 @@ public class CheckManager {
         BukkitTask timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             CheckPlayerData d = activeChecks.get(uuid);
             if (d == null) return;
+            d.setSignTimeoutTask(null);
             restoreCurrentSign(d);
             for (HackDefinition h : batch)
                 d.getResults().put(h.getId(), HackResult.PROTECTED);
@@ -145,7 +147,7 @@ public class CheckManager {
             scheduleNextOrFinish(uuid);
         }, plugin.getConfigManager().getTimeoutTicks());
 
-        data.setSignTimeoutTask(timeout);
+        data.setSignTimeoutTask((WrappedTask) timeout);
     }
 
     private Component buildComponent(HackDefinition hack) {
@@ -330,7 +332,8 @@ public class CheckManager {
         if (anyDetected && cfg.isCommandIfPositiveEnabled()) {
             String cmd = cfg.getPositiveCommand()
                     .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand);
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%command%", detectedMessage);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
             commandExecuted = true;
         }
@@ -338,7 +341,8 @@ public class CheckManager {
         if (anyProtected && !anyDetected && cfg.isCommandIfProtectedEnabled()) {
             String cmd = cfg.getProtectedCommand()
                     .replace("%player%", tn)
-                    .replace("%message%", rawMessageForCommand);
+                    .replace("%message%", rawMessageForCommand)
+                    .replace("%command%", detectedMessage);
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
             commandExecuted = true;
         }
